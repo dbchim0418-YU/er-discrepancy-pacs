@@ -1,3 +1,19 @@
+# ===== 우리 프로젝트 =====
+# 비밀키 (절대 올리지 않기)
+.streamlit/secrets.toml
+*-firebase-adminsdk-*.json
+serviceAccountKey*.json
+
+# 영상 데이터 (라이선스상 재배포 금지)
+data/
+*.dcm
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ===== 아래는 GitHub 기본 Python 템플릿 =====
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
