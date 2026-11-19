@@ -1,0 +1,12 @@
+# Python 3.11 이상 (팀원 모두 같은 버전 사용)
+# 첫 실행 후 `pip freeze`로 정확한 버전을 확인해 이 파일을 고정 버전으로 바꾼다.
+streamlit>=1.40
+firebase-admin>=6.5
+pydicom>=3.0
+opencv-python-headless>=4.9
+numpy>=1.26
+pillow>=10.0
+plotly>=5.20
+pandas>=2.1
+requests>=2.31
+pytest>=8.0
