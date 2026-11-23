@@ -32,6 +32,26 @@ def _figure(image: np.ndarray, title: str):
     return fig
 
 
+def _check_gray_uint8(image: np.ndarray, name: str) -> None:
+    if not isinstance(image, np.ndarray) or image.dtype != np.uint8 or image.ndim != 2:
+        raise ValueError(f"{name}은(는) 흑백 uint8 2차원 배열이어야 합니다.")
+
+
+def validate_images(image: np.ndarray, compare: Optional[np.ndarray] = None) -> None:
+    """뷰어에 넣기 전 영상 형식 검사(개발 규칙 2번).
+
+    알고리즘이 잘못된 결과를 넘기면 화면에 그려지기 전에 원인을 알려준다.
+    """
+    _check_gray_uint8(image, "원본 영상")
+    if compare is not None:
+        _check_gray_uint8(compare, "처리 결과 영상")
+        if compare.shape != image.shape:
+            raise ValueError(
+                f"처리 결과 영상의 크기 {compare.shape}가 원본 {image.shape}과 다릅니다. "
+                "알고리즘은 입력과 같은 크기를 돌려줘야 합니다."
+            )
+
+
 def show_image(
     image: np.ndarray,
     key: str,
@@ -39,8 +59,7 @@ def show_image(
     titles: tuple[str, str] = ("원본", "처리 결과"),
 ) -> None:
     """영상 표시. key는 화면마다 겹치지 않게 접두어를 붙인다(예: img_case_view)."""
-    if image.dtype != np.uint8 or image.ndim != 2:
-        raise ValueError("show_image()에는 흑백 uint8 배열만 넣을 수 있습니다.")
+    validate_images(image, compare)
 
     reset_key = f"img_reset_{key}"
     if st.button("화면 초기화", key=f"{key}_reset_btn"):

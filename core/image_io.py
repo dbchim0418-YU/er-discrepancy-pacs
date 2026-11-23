@@ -70,7 +70,12 @@ def load_image(source: Source, filename: str | None = None) -> tuple[np.ndarray,
 # ----- DICOM -----
 
 def _first(value):
-    """DICOM 다중값(MultiValue)이면 첫 값을 쓴다."""
+    """DICOM 다중값(MultiValue)이면 첫 값을 쓴다.
+
+    문자열은 value[0]이 첫 글자가 되므로("40" → "4") 바로 숫자로 바꾼다.
+    """
+    if isinstance(value, (str, bytes)):
+        return float(value)
     try:
         return float(value[0])
     except (TypeError, IndexError):

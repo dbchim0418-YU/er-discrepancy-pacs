@@ -74,3 +74,11 @@ def test_monochrome1_is_inverted():
     mono1, _ = load_image(_dicom_bytes(pixels, "MONOCHROME1"), filename="b.dcm")
     assert mono2[0, 0] == 0 and mono2[0, 1] == 255
     assert mono1[0, 0] == 255 and mono1[0, 1] == 0
+
+
+def test_first_handles_string_and_multivalue():
+    # 리뷰 반영: "40"이 4.0이 되던 문제
+    from core.image_io import _first
+    assert _first("40") == 40.0
+    assert _first(["40", "400"]) == 40.0
+    assert _first(1500) == 1500.0

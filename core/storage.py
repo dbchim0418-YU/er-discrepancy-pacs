@@ -37,10 +37,14 @@ def _full_path(path: str, root: Optional[str | Path] = None) -> Path:
 def save_file(data: bytes, path: str, root: Optional[str | Path] = None) -> str:
     """파일을 저장하고 저장 경로(상대 경로)를 돌려준다. 같은 경로에 파일이 있으면 거절한다."""
     full = _full_path(path, root)
-    if full.exists():
-        raise FileExistsError(f"이미 같은 경로에 파일이 있습니다(덮어쓰기 금지): {path}")
     full.parent.mkdir(parents=True, exist_ok=True)
-    full.write_bytes(data)
+    # "xb" 모드: 파일이 이미 있으면 여는 순간 FileExistsError가 난다.
+    # 존재 확인과 쓰기를 따로 하면 그 사이에 다른 요청(버튼 두 번 클릭 등)이 끼어들 수 있어서 한 번에 처리한다.
+    try:
+        with open(full, "xb") as f:
+            f.write(data)
+    except FileExistsError:
+        raise FileExistsError(f"이미 같은 경로에 파일이 있습니다(덮어쓰기 금지): {path}") from None
     return path
 
 
