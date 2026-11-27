@@ -57,6 +57,15 @@ def test_compare_roi_shows_contrast_change():
     assert c["diff"]["std"] > 0
 
 
+def test_compare_roi_has_roi_and_image_shape_on_top():
+    # 리뷰 #11: 리포트에서 바로 꺼내 쓰도록 최상위에 좌표와 영상 크기를 둔다
+    img = _image()
+    c = compare_roi(img, img.copy(), {"x": 1, "y": 2, "w": 3, "h": 2})
+    assert c["roi"] == {"x": 1, "y": 2, "w": 3, "h": 2} == c["before"]["roi"]
+    assert c["image_shape"] == [6, 8]
+    assert all(type(n) is int for n in c["image_shape"])
+
+
 def test_compare_roi_rejects_different_sizes():
     with pytest.raises(ValueError, match="크기가 다릅니다"):
         compare_roi(_image(), np.zeros((3, 3), dtype=np.uint8), {"x": 0, "y": 0, "w": 1, "h": 1})
