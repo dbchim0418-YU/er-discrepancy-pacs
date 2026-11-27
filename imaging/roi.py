@@ -46,8 +46,12 @@ def roi_stats(image: np.ndarray, roi: dict) -> dict:
 def compare_roi(original: np.ndarray, processed: np.ndarray, roi: dict) -> dict:
     """같은 ROI에서 원본과 처리 결과의 통계를 비교한다.
 
-    돌려주는 값: {"before": 원본 통계, "after": 결과 통계, "diff": 결과 - 원본}
+    돌려주는 값:
+      roi          검사를 통과한 좌표 (before·after의 roi와 같다. 리포트에서 바로 꺼내 쓰기용)
+      image_shape  [높이, 너비]. 좌표가 영상의 어느 부분인지 알려면 영상 크기가 함께 필요하다
+      before       원본 통계,  after  결과 통계,  diff  결과 - 원본
     diff의 std가 커지면 대비가 강해진 것(CLAHE), 작아지면 잡음이 줄거나 흐려진 것(Gaussian)이다.
+    변화율(%)은 workflow/report.py에서 계산한다(리뷰 #11에서 정함).
     """
     _check_image(original)
     _check_image(processed)
@@ -57,7 +61,13 @@ def compare_roi(original: np.ndarray, processed: np.ndarray, roi: dict) -> dict:
     before = roi_stats(original, roi)
     after = roi_stats(processed, roi)
     diff = {k: after[k] - before[k] for k in ("mean", "std", "var", "min", "max", "median")}
-    return {"before": before, "after": after, "diff": diff}
+    return {
+        "roi": before["roi"],
+        "image_shape": [int(n) for n in original.shape],
+        "before": before,
+        "after": after,
+        "diff": diff,
+    }
 
 
 def validate_roi(roi: dict, shape: tuple[int, int]) -> dict:
